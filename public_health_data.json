@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "last_updated": "2026-06-09T15:26:08Z",
+    "last_updated": "2026-06-09T16:04:46Z",
     "report_date": "2026-06-08",
     "cities": [
       {
@@ -185,6 +185,18 @@
   },
   "alerts": [
     {
+      "id": "0377c7493d",
+      "date": "2026-06-09",
+      "city": "All",
+      "country": "Global",
+      "pathogen": "dengue",
+      "title": "Venezuela - Level 3: Reconsider Travel",
+      "summary": "Reconsider travelto Venezuela due\u00a0to\u00a0risk of\u00a0crime,\u00a0kidnapping,\u00a0terrorism,\u00a0and\u00a0poor health infrastructure.\u00a0Some areas have increased risk. Read the entire Travel Advisory.\u202f\nU.S. embassy operations\nIn March 2026, the U.S. Department of State announced...",
+      "risk_level": "Medium",
+      "source": "US State Dept Advisories",
+      "link": "https://travel.state.gov/content/tsg_aem/us/en/home/international-travel/travel-advisories/destination.ven.html"
+    },
+    {
       "id": "4ddbb30684",
       "date": "2026-06-08",
       "city": "boston",
@@ -193,7 +205,8 @@
       "title": "Gastroenteritis Advisory Near Gillette Stadium",
       "summary": "Local health authorities report an increase in norovirus-like symptoms among travelers in the Foxborough/Boston area. Increased sanitation protocols are recommended for hospitality staff.",
       "risk_level": "Medium",
-      "source": "Massachusetts Department of Public Health"
+      "source": "Massachusetts Department of Public Health",
+      "link": "https://www.boston.gov/departments/public-health-commission"
     },
     {
       "id": "a2f240732b",
@@ -204,7 +217,8 @@
       "title": "Dengue Transmission Warning - Mexico City Metro",
       "summary": "Heavy seasonal rains have led to increased standing water and higher Aedes aegypti mosquito densities. Visitors are advised to apply insect repellent and wear protective clothing.",
       "risk_level": "High",
-      "source": "Secretar\u00eda de Salud de M\u00e9xico"
+      "source": "Secretar\u00eda de Salud de M\u00e9xico",
+      "link": "https://www.who.int/emergencies/disease-outbreak-news"
     },
     {
       "id": "48ae0a8141",
@@ -215,7 +229,8 @@
       "title": "Imported Measles Case Under Investigation",
       "summary": "Toronto Public Health has confirmed an imported case of measles. Potential exposure sites include public transit routes from Pearson International Airport. Public contact tracing is active.",
       "risk_level": "High",
-      "source": "Toronto Public Health"
+      "source": "Toronto Public Health",
+      "link": "https://www.toronto.ca/community-people/health-wellness-care/"
     },
     {
       "id": "05374f1572",
@@ -226,7 +241,8 @@
       "title": "Canada - Level 1: Exercise Normal Precautions",
       "summary": "Exercise normal precautionin Canada.\nCanada is generally a safe destination for travelers.\nFor Americans traveling to Canada for FIFA World Cup 2026 matches, follow the latest guidance from the U.S. Embassy in Canada.\nCrime\n\nPetty crime is common, es...",
       "risk_level": "Low",
-      "source": "US State Dept Advisories"
+      "source": "US State Dept Advisories",
+      "link": "https://travel.state.gov/content/tsg_aem/us/en/home/international-travel/travel-advisories/destination.can.html"
     },
     {
       "id": "0ee1daaadc",
@@ -237,7 +253,32 @@
       "title": "Local Dengue Transmission Alert",
       "summary": "Florida Health Dept has detected local transmission of Dengue virus in Miami-Dade County. Mosquito control operations have been escalated near fan festival zones.",
       "risk_level": "Medium",
-      "source": "Florida Department of Health"
+      "source": "Florida Department of Health",
+      "link": "https://www.floridahealth.gov/"
+    },
+    {
+      "id": "1781d37a41",
+      "date": "2026-06-04",
+      "city": "All",
+      "country": "Global",
+      "pathogen": "ebola",
+      "title": "Uganda - Level 4: Do Not Travel",
+      "summary": "Do not travelto Uganda due to crime, health, terrorism, and unrest. Please read the full text of the advisory.\nTravel restrictions for government employees\nThe U.S. government has limited ability to provide emergency consular services to U.S. citizen...",
+      "risk_level": "High",
+      "source": "US State Dept Advisories",
+      "link": "https://travel.state.gov/content/tsg_aem/us/en/home/international-travel/travel-advisories/destination.uga.html"
+    },
+    {
+      "id": "aed1b6f760",
+      "date": "2026-06-04",
+      "city": "All",
+      "country": "Global",
+      "pathogen": "ebola",
+      "title": "Rwanda - Level 3: Reconsider Travel",
+      "summary": "Reconsider travelin\u00a0Rwanda\u00a0due to\u00a0crime,\u00a0unrest\u00a0and\u00a0health\u00a0risks. Some areas have increased risk. Read the entire Travel Advisory.\nThe U.S. government has limited ability to provide emergency consular services to U.S. citizens in Rwanda due to the He...",
+      "risk_level": "Medium",
+      "source": "US State Dept Advisories",
+      "link": "https://travel.state.gov/content/tsg_aem/us/en/home/international-travel/travel-advisories/destination.rwa.html"
     },
     {
       "id": "a96166a6cc",
@@ -248,7 +289,8 @@
       "title": "Democratic Republic of the Congo - Level 4: Do Not Travel",
       "summary": "There were no changes to the advisory level or risk indicators. Advisory summary was updated. Do Not Travel to the Democratic Republic of the Congo due to&nbsp;the&nbsp;Ebola&#8239;Bundibugyo Virus Disease&#8239;outbreak&#8239;in Ituri Province in th...",
       "risk_level": "High",
-      "source": "US State Dept Advisories"
+      "source": "US State Dept Advisories",
+      "link": "https://travel.state.gov/content/travel/en/traveladvisories/traveladvisories/democratic-republic-of-the-congo-travel-advisory.html"
     },
     {
       "id": "2f1dbc91b5",
@@ -259,7 +301,8 @@
       "title": "COVID-19 Variant Tracking Update",
       "summary": "Wastewater surveillance in the NY/NJ metropolitan area indicates a slight uptick in COVID-19 viral loads. Health officials urge fans to stay up-to-date with booster vaccinations.",
       "risk_level": "Low",
-      "source": "NYC Department of Health"
+      "source": "NYC Department of Health",
+      "link": "https://www.nyc.gov/site/doh/index.page"
     },
     {
       "id": "b004ca99c4",
@@ -270,7 +313,8 @@
       "title": "Food Safety & Norovirus Reminder",
       "summary": "Vancouver Coastal Health issues hygiene directives to local food vendors and pop-ups serving World Cup tourists following a minor cluster of norovirus cases at a food market.",
       "risk_level": "Medium",
-      "source": "Vancouver Coastal Health"
+      "source": "Vancouver Coastal Health",
+      "link": "http://www.vch.ca/"
     },
     {
       "id": "65ba878e71",
@@ -281,7 +325,20 @@
       "title": "Mpox Awareness & Safety Bulletin",
       "summary": "LAC DPH has issued an educational bulletin regarding Mpox symptoms and vaccine availability ahead of the tournament's opening matches. General risk remains low.",
       "risk_level": "Low",
-      "source": "LA County Department of Public Health"
+      "source": "LA County Department of Public Health",
+      "link": "http://publichealth.lacounty.gov/"
+    },
+    {
+      "id": "4f623156c7",
+      "date": "2026-05-29",
+      "city": "All",
+      "country": "Mexico",
+      "pathogen": "covid19",
+      "title": "Mexico Travel Advisory - Level 2: Exercise Increased Caution",
+      "summary": "Exercise increased cautionin Mexico due to terrorism, crime, and kidnapping.\u00a0Some areas have increased risk. Read the entire Travel Advisory.\nFor Americans traveling to Mexico for FIFA World Cup 2026 matches, follow the latest guidance from the U.S. ...",
+      "risk_level": "Low",
+      "source": "US State Dept Advisories",
+      "link": "https://travel.state.gov/content/tsg_aem/us/en/home/international-travel/travel-advisories/destination.mex.html"
     },
     {
       "id": "48219fd368",
@@ -292,18 +349,8 @@
       "title": "South Sudan - Level 4: Do Not Travel",
       "summary": "Do not travelto&nbsp;South Sudan due to risk of unrest, crime, kidnapping, landmines, and health risks.\n&nbsp;\n&nbsp;\nThe U.S. government has limited ability to provide emergency consular services to U.S. citizens in South Sudan&nbsp;due to the healt...",
       "risk_level": "High",
-      "source": "US State Dept Advisories"
-    },
-    {
-      "id": "0377c7493d",
-      "date": "2026-03-19",
-      "city": "All",
-      "country": "Global",
-      "pathogen": "dengue",
-      "title": "Venezuela - Level 3: Reconsider Travel",
-      "summary": "The travel advisory level&nbsp;decreased&nbsp;to 3. The &#8220;Wrongful Detention,&#8221; &#8220;Unrest,&#8221;&nbsp;and &#8220;Other&#8221; risk indicators were removed.&nbsp;Areas&nbsp;of increased risk&nbsp;were&nbsp;added. Advisory summary was up...",
-      "risk_level": "Medium",
-      "source": "US State Dept Advisories"
+      "source": "US State Dept Advisories",
+      "link": "https://travel.state.gov/content/tsg_aem/us/en/home/international-travel/travel-advisories/destination.ssd.html"
     },
     {
       "id": "20b1e6ee62",
@@ -312,20 +359,10 @@
       "country": "Global",
       "pathogen": "measles",
       "title": "Yemen - Level 4: Do Not Travel",
-      "summary": "The Department of State renewed its Travel Advisory for Yemen on December 19, 2025. There were no changes to the advisory level or risk indicators. Advisory summary was updated.\nDo not travel to Yemen due to risk of&nbsp;terrorism, unrest, crime, hea...",
+      "summary": "Do not travelin Yemen due to risk of terrorism, unrest, crime, health risks, kidnapping,\u202fand\u202flandmines.\nU.S. citizens should not travel to Yemen for any reason. The U.S. Embassy in Sana\u2019a suspended its operations in February 2015. The U.S. government...",
       "risk_level": "High",
-      "source": "US State Dept Advisories"
-    },
-    {
-      "id": "4f623156c7",
-      "date": "2025-08-12",
-      "city": "All",
-      "country": "Mexico",
-      "pathogen": "covid19",
-      "title": "Mexico Travel Advisory - Level 2: Exercise Increased Caution",
-      "summary": "Exercise increased caution in Mexico due to terrorism, crime, and kidnapping.\nAdvisory summary\n\nMany violent crimes take place in Mexico. They include homicide, kidnapping, carjacking, and robbery. There is a risk of terrorist violence, including ter...",
-      "risk_level": "Low",
-      "source": "US State Dept Advisories"
+      "source": "US State Dept Advisories",
+      "link": "https://travel.state.gov/content/tsg_aem/us/en/home/international-travel/travel-advisories/destination.yem.html"
     },
     {
       "id": "49ecdfc8aa",
@@ -336,7 +373,8 @@
       "title": "Solomon Islands - Level 2: Exercise Increased Caution",
       "summary": "Reissued after periodic review with updated risk information.\nExercise increased caution traveling to Solomon Islands due to risks to health, unexploded ordinance, crime and civil unrest.\nMosquito-borne diseases such as malaria and dengue fever are w...",
       "risk_level": "Low",
-      "source": "US State Dept Advisories"
+      "source": "US State Dept Advisories",
+      "link": "https://travel.state.gov/content/travel/en/traveladvisories/traveladvisories/solomon-island-travel-advisory.html"
     },
     {
       "id": "3f2ef3ba2f",
@@ -347,7 +385,8 @@
       "title": "Albania - Level 2: Exercise Increased Caution",
       "summary": "Reissued with obsolete COVID-19 page links removed.\nExercise increased caution in Albania due to&nbsp;crime.\nCountry Summary:&nbsp;Law enforcement&#8217;s ability to protect and assist travelers is limited in some areas, especially in remote regions....",
       "risk_level": "Low",
-      "source": "US State Dept Advisories"
+      "source": "US State Dept Advisories",
+      "link": "https://travel.state.gov/content/travel/en/traveladvisories/traveladvisories/albania-travel-advisory.html"
     },
     {
       "id": "aa5486e78e",
@@ -358,7 +397,8 @@
       "title": "Suriname - Level 1: Exercise Normal Precautions",
       "summary": "Reissued with obsolete COVID-19 page links removed.\nExercise normal precautions in Suriname.\nRead the country information page for additional information on travel to Suriname.\nIf you decide to travel to Suriname:\n\nEnroll in the Smart Traveler Enroll...",
       "risk_level": "Low",
-      "source": "US State Dept Advisories"
+      "source": "US State Dept Advisories",
+      "link": "https://travel.state.gov/content/travel/en/traveladvisories/traveladvisories/suriname-travel-advisory.html"
     },
     {
       "id": "d09412650e",
@@ -369,7 +409,20 @@
       "title": "Honduras - Level 3: Reconsider Travel",
       "summary": "Reconsider travel to Honduras due to crime.&nbsp;Read the entire Travel Advisory.\nDo not travel to:\n\nGracias a Dios Department, most eastern department, due to&nbsp;crime.\n\nCountry Summary: Violent crime, such as homicide, armed robbery, and kidnappi...",
       "risk_level": "Medium",
-      "source": "US State Dept Advisories"
+      "source": "US State Dept Advisories",
+      "link": "https://travel.state.gov/content/travel/en/traveladvisories/traveladvisories/honduras-travel-advisory.html"
+    },
+    {
+      "id": "e7de2fae3f",
+      "date": "2024-11-27",
+      "city": "All",
+      "country": "Global",
+      "pathogen": "covid19",
+      "title": "China - Level 2: Exercise Increased Caution",
+      "summary": "Exercise increased cautionin China due to&nbsp;arbitrary enforcement of local laws, including in relation to exit bans.\nThe People\u2019s Republic of China (PRC) government arbitrarily enforces local laws, including exit bans on U.S. citizens and citizens...",
+      "risk_level": "Low",
+      "source": "US State Dept Advisories",
+      "link": "https://travel.state.gov/content/tsg_aem/us/en/home/international-travel/travel-advisories/destination.chn.html"
     },
     {
       "id": "98cc94c530",
@@ -380,7 +433,8 @@
       "title": "Sint Eustatius - Level 1: Exercise Normal Precautions",
       "summary": "Reissued after periodic review without changes.\nExercise normal precautions in Sint Eustatius.&nbsp;\nRead the country information page for additional information on travel to Sint Eustatius.&#8239;&#8239;\nIf you decide to travel to Sint Eustatius:&#8...",
       "risk_level": "Low",
-      "source": "US State Dept Advisories"
+      "source": "US State Dept Advisories",
+      "link": "https://travel.state.gov/content/travel/en/traveladvisories/traveladvisories/sint-eustatius-travel-advisory.html"
     },
     {
       "id": "c6e80de090",
@@ -391,7 +445,8 @@
       "title": "Saba - Level 1: Exercise Normal Precautions",
       "summary": "Reissued after periodic review without changes.\nExercise normal precautions in Saba.\nRead the country information page for additional information on travel to Saba.\nIf you decide to travel to Saba:\n\nRead the Department of State&#8217;s COVID-19 page ...",
       "risk_level": "Low",
-      "source": "US State Dept Advisories"
+      "source": "US State Dept Advisories",
+      "link": "https://travel.state.gov/content/travel/en/traveladvisories/traveladvisories/saba-travel-advisory.html"
     },
     {
       "id": "0d0d9ff03e",
@@ -402,7 +457,8 @@
       "title": "Zambia - Level 1: Exercise Normal Precautions",
       "summary": "Reissued with obsolete COVID-19 page links removed.\nExercise normal precautions in Zambia.&nbsp;\nRead the country information page for additional information about travel to Zambia.\nIf you decide to travel to Zambia:&nbsp;\n\nEnroll in the Smart Travel...",
       "risk_level": "Low",
-      "source": "US State Dept Advisories"
+      "source": "US State Dept Advisories",
+      "link": "https://travel.state.gov/content/travel/en/traveladvisories/traveladvisories/zambia-travel-advisory.html"
     },
     {
       "id": "02ec146fc1",
@@ -413,7 +469,8 @@
       "title": "Eritrea - Level 2: Exercise Increased Caution",
       "summary": "Reissued with obsolete COVID-19 page links removed.\nExercise increased caution in Eritrea due to travel restrictions, limited consular assistance, landmines, and wrongful detentions.\nCountry Summary: The U.S. government has limited ability to provide...",
       "risk_level": "Low",
-      "source": "US State Dept Advisories"
+      "source": "US State Dept Advisories",
+      "link": "https://travel.state.gov/content/travel/en/traveladvisories/traveladvisories/eritrea-travel-advisory.html"
     }
   ],
   "trends": {

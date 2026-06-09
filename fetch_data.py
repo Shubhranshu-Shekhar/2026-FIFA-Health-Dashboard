@@ -109,7 +109,8 @@ def fetch_rss_alerts():
                         "title": title,
                         "summary": clean_desc[:250] + "..." if len(clean_desc) > 250 else clean_desc,
                         "risk_level": risk_level,
-                        "source": "US State Dept Advisories"
+                        "source": "US State Dept Advisories",
+                        "link": link
                     })
         except Exception as e:
             print(f"Warning: Failed to fetch RSS alerts from {url}: {e}", file=sys.stderr)
@@ -270,6 +271,24 @@ def generate_simulated_alerts(today):
         alert_date = today - timedelta(days=template["offset_days"])
         date_str = alert_date.strftime("%Y-%m-%d")
         
+        # Map source to a real url
+        link = "https://www.who.int/emergencies/disease-outbreak-news"
+        source_lower = template["source"].lower()
+        if "massachusetts" in source_lower or "boston" in source_lower:
+            link = "https://www.boston.gov/departments/public-health-commission"
+        elif "mexico" in source_lower:
+            link = "https://www.gob.mx/salud"
+        elif "toronto" in source_lower or "canada" in source_lower:
+            link = "https://www.toronto.ca/community-people/health-wellness-care/"
+        elif "florida" in source_lower or "miami" in source_lower:
+            link = "https://www.floridahealth.gov/"
+        elif "new york" in source_lower or "nyc" in source_lower:
+            link = "https://www.nyc.gov/site/doh/index.page"
+        elif "vancouver" in source_lower:
+            link = "http://www.vch.ca/"
+        elif "los angeles" in source_lower or "la county" in source_lower:
+            link = "http://publichealth.lacounty.gov/"
+            
         alerts.append({
             "id": hashlib.md5(f"{template['title']}_{date_str}".encode('utf-8')).hexdigest()[:10],
             "date": date_str,
@@ -279,7 +298,8 @@ def generate_simulated_alerts(today):
             "title": template["title"],
             "summary": template["summary"],
             "risk_level": template["risk_level"],
-            "source": template["source"]
+            "source": template["source"],
+            "link": link
         })
         
     return alerts

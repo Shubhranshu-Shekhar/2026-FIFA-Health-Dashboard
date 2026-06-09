@@ -277,8 +277,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
       let cityBadgeText = alert.city === 'All' ? `${alert.country} (National)` : appData.metadata.cities.find(x => x.id === alert.city)?.name || alert.city;
 
-      const alertElement = document.createElement('div');
-      alertElement.className = `alert-strip ${alertClass} p-3.5 rounded-sm flex flex-col md:flex-row md:items-start justify-between gap-3 ${highlightBorder}`;
+      const alertElement = document.createElement('a');
+      alertElement.href = alert.link || '#';
+      alertElement.target = '_blank';
+      alertElement.rel = 'noopener noreferrer';
+      alertElement.className = `alert-strip ${alertClass} p-3.5 rounded-sm flex flex-col md:flex-row md:items-start justify-between gap-3 ${highlightBorder} hover:border-[var(--text-primary)] hover:bg-[var(--bg-tertiary)] transition-all cursor-pointer block`;
       alertElement.innerHTML = `
         <div class="space-y-1">
           <div class="flex flex-wrap items-center gap-1.5">
