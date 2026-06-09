@@ -7,6 +7,7 @@ import random
 import hashlib
 import sys
 import re
+import math
 
 # 16 official host cities for FIFA World Cup 2026
 CITIES = [
@@ -375,18 +376,89 @@ def main():
                 amplitude = daily_base * 0.02  # minor seasonal swing
                 noise_scale = daily_base * 0.06  # minor random swing (+/- 3%)
             
-            # Generate 45 days of data points
-            for d in range(45, 0, -1):
-                date_val = yesterday - timedelta(days=d)
+            # Outbreak simulation based on city & pathogen hash for realistic model curves
+            combo_hash = int(hashlib.sha256(f"{city_id}_{pathogen_id}".encode('utf-8')).hexdigest()[:8], 16)
+            has_outbreak = (combo_hash % 4 == 0) and (pathogen_id not in ["ebola", "measles"])
+            
+            # Generate historical (45 days) + future forecast (14 days)
+            # Total timeline of 59 days: day_offset from -45 to +13 relative to yesterday
+            for d in range(-45, 14):
+                date_val = yesterday + timedelta(days=d)
                 date_str = date_val.strftime("%Y-%m-%d")
                 
-                cases, change_pct = generate_deterministic_val(
-                    city_id, pathogen_id, date_str, base, amplitude, noise_scale
-                )
+                day_of_year = date_val.timetuple().tm_yday
+                
+                # Base seasonal wave
+                wave = amplitude * (1.0 + 0.3 * math.sin(day_of_year / 365.0 * 2 * math.pi))
+                
+                # Dynamic outbreak peak to show mathematical model trajectory
+                outbreak_val = 0.0
+                peak_height = 0.0
+                if has_outbreak:
+                    # An outbreak peaking around 5 days ago (day_offset = -5)
+                    peak_offset = -5
+                    width = 10.0
+                    peak_height = base * 0.8
+                    outbreak_val = peak_height * math.exp(-((d - peak_offset) / width) ** 2)
+                
+                # The clean mathematical model baseline
+                model_val = max(0, int(base + wave + outbreak_val))
+                
+                # Observed reported cases (only for historical dates)
+                if d <= 0:
+                    # Apply weekend reporting delays (weekday reporting factor)
+                    weekday = date_val.weekday()
+                    reporting_factor = 1.0
+                    if pathogen_id not in ["ebola", "measles"]:
+                        if weekday in [5, 6]: # Sat, Sun
+                            reporting_factor = 0.80
+                        elif weekday in [1, 2]: # Tue, Wed
+                            reporting_factor = 1.15
+                    
+                    # Generate deterministic noise
+                    seed_str = f"{city_id}_{pathogen_id}_{date_str}"
+                    seed_hash = hashlib.sha256(seed_str.encode('utf-8')).hexdigest()
+                    val_rand = int(seed_hash[:8], 16) / 4294967295.0
+                    noise = (val_rand - 0.5) * noise_scale
+                    
+                    cases_val = max(0, int((base + wave + outbreak_val + noise) * reporting_factor))
+                    
+                    # Calculate change percentage from previous day
+                    prev_date_val = date_val - timedelta(days=1)
+                    prev_seed_str = f"{city_id}_{pathogen_id}_{prev_date_val.strftime('%Y-%m-%d')}"
+                    prev_seed_hash = hashlib.sha256(prev_seed_str.encode('utf-8')).hexdigest()
+                    prev_val_rand = int(prev_seed_hash[:8], 16) / 4294967295.0
+                    prev_weekday = prev_date_val.weekday()
+                    
+                    prev_reporting_factor = 1.0
+                    if pathogen_id not in ["ebola", "measles"]:
+                        if prev_weekday in [5, 6]:
+                            prev_reporting_factor = 0.80
+                        elif prev_weekday in [1, 2]:
+                            prev_reporting_factor = 1.15
+                            
+                    prev_d = d - 1
+                    prev_outbreak_val = 0.0
+                    if has_outbreak:
+                        prev_outbreak_val = peak_height * math.exp(-((prev_d - peak_offset) / width) ** 2)
+                        
+                    prev_wave = amplitude * (1.0 + 0.3 * math.sin(prev_date_val.timetuple().tm_yday / 365.0 * 2 * math.pi))
+                    prev_noise = (prev_val_rand - 0.5) * noise_scale
+                    prev_cases_val = max(0, int((base + prev_wave + prev_outbreak_val + prev_noise) * prev_reporting_factor))
+                    
+                    if prev_cases_val > 0:
+                        change_pct = round(((cases_val - prev_cases_val) / prev_cases_val) * 100.0, 1)
+                    else:
+                        change_pct = 0.0
+                else:
+                    # Future dates have no reported cases
+                    cases_val = None
+                    change_pct = 0.0
                 
                 trends[city_id][pathogen_id].append({
                     "date": date_str,
-                    "cases": cases,
+                    "cases": cases_val,
+                    "model_projected": model_val,
                     "change_pct": change_pct
                 })
                 

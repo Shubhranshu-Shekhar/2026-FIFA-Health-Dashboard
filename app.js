@@ -71,9 +71,9 @@ document.addEventListener('DOMContentLoaded', () => {
       .catch(err => {
         console.error('Error loading public health data:', err);
         alertsContainer.innerHTML = `
-          <div class="p-4 bg-red-500/10 border border-red-500/20 rounded-xl text-red-500 text-xs flex items-center space-x-2">
-            <i data-lucide="alert-octagon" class="w-5 h-5 flex-shrink-0"></i>
-            <span>Error loading passive surveillance data. Please check if public_health_data.json is compiled.</span>
+          <div class="p-3 border border-red-500 text-red-500 text-xs flex items-center space-x-2 bg-red-500/5">
+            <i data-lucide="alert-octagon" class="w-4 h-4 flex-shrink-0"></i>
+            <span>Error loading passive surveillance data. Data aggregate offline.</span>
           </div>
         `;
         if (window.lucide) {
@@ -83,7 +83,6 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function setupTheme() {
-    // Check local storage or default to dark
     const savedTheme = localStorage.getItem('theme');
     if (savedTheme === 'light') {
       document.documentElement.classList.remove('dark');
@@ -100,14 +99,12 @@ document.addEventListener('DOMContentLoaded', () => {
       document.documentElement.classList.add('dark');
       localStorage.setItem('theme', 'dark');
     }
-    // Update chart colors on theme toggle
     if (trendChart) {
       updateChartColors();
     }
   }
 
   function populateDropdowns() {
-    // Populate Cities Select
     citySelect.innerHTML = '';
     appData.metadata.cities.forEach(city => {
       const option = document.createElement('option');
@@ -116,7 +113,6 @@ document.addEventListener('DOMContentLoaded', () => {
       citySelect.appendChild(option);
     });
 
-    // Populate Pathogens Select
     pathogenSelect.innerHTML = '';
     appData.metadata.pathogens.forEach(p => {
       const option = document.createElement('option');
@@ -127,7 +123,6 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function bindEvents() {
-    // Dropdowns
     citySelect.addEventListener('change', (e) => {
       selectedCityId = e.target.value;
       updateView();
@@ -138,78 +133,66 @@ document.addEventListener('DOMContentLoaded', () => {
       updateView();
     });
 
-    // Alert Filters
     alertFilterLocal.addEventListener('click', () => {
       currentAlertFilter = 'local';
-      alertFilterLocal.classList.add('bg-indigo-500', 'text-white');
-      alertFilterLocal.classList.remove('bg-[var(--bg-primary)]', 'text-[var(--text-secondary)]', 'border', 'border-[var(--border-glass)]');
-      
-      alertFilterAll.classList.remove('bg-indigo-500', 'text-white');
-      alertFilterAll.classList.add('bg-[var(--bg-primary)]', 'text-[var(--text-secondary)]', 'border', 'border-[var(--border-glass)]');
+      alertFilterLocal.className = 'text-3xs font-bold uppercase px-2 py-1 bg-[var(--text-primary)] text-[var(--bg-primary)] transition-all';
+      alertFilterAll.className = 'text-3xs font-bold uppercase px-2 py-1 bg-[var(--bg-primary)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-all';
       updateAlertsSection();
     });
 
     alertFilterAll.addEventListener('click', () => {
       currentAlertFilter = 'all';
-      alertFilterAll.classList.add('bg-indigo-500', 'text-white');
-      alertFilterAll.classList.remove('bg-[var(--bg-primary)]', 'text-[var(--text-secondary)]', 'border', 'border-[var(--border-glass)]');
-      
-      alertFilterLocal.classList.remove('bg-indigo-500', 'text-white');
-      alertFilterLocal.classList.add('bg-[var(--bg-primary)]', 'text-[var(--text-secondary)]', 'border', 'border-[var(--border-glass)]');
+      alertFilterAll.className = 'text-3xs font-bold uppercase px-2 py-1 bg-[var(--text-primary)] text-[var(--bg-primary)] transition-all';
+      alertFilterLocal.className = 'text-3xs font-bold uppercase px-2 py-1 bg-[var(--bg-primary)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-all';
       updateAlertsSection();
     });
 
-    // Theme Toggle
     themeToggle.addEventListener('click', toggleTheme);
   }
 
   function updateView() {
     if (!appData) return;
 
-    // Get Active City Info
     const city = appData.metadata.cities.find(c => c.id === selectedCityId);
     const pathogen = appData.metadata.pathogens.find(p => p.id === selectedPathogenId);
 
-    // Update Dashboard Header
     cityName.innerText = city.name;
     cityCountry.innerText = city.country;
     cityFlag.innerText = getFlagEmoji(city.country);
-    
-    // Update Pathogen Desc Info box
     pathogenDesc.innerText = pathogen.description;
 
-    // Retrieve Trends
     const cityTrends = appData.trends[selectedCityId];
     const series = cityTrends[selectedPathogenId] || [];
 
-    // Latest Day Metrics
-    if (series.length > 0) {
-      const latestData = series[series.length - 1];
+    // Filter historical points to find latest metrics
+    const historicalSeries = series.filter(item => item.cases !== null);
+
+    if (historicalSeries.length > 0) {
+      const latestData = historicalSeries[historicalSeries.length - 1];
       const dailyCasesVal = latestData.cases;
       const changePct = latestData.change_pct;
 
-      // Formatting daily cases
       metricDailyCases.innerText = dailyCasesVal.toLocaleString();
       
-      // Formatting change badge
+      // Minimal, functional styling of trend badge
       if (selectedPathogenId === 'ebola' && dailyCasesVal === 0) {
-        metricDailyChange.innerText = 'Stable (0)';
-        metricDailyChange.className = 'inline-flex items-center text-xs font-semibold px-2.5 py-0.5 rounded-full bg-slate-500/10 text-slate-500 border border-slate-500/20';
+        metricDailyChange.innerText = 'STABLE (0)';
+        metricDailyChange.className = 'inline-flex items-center text-3xs font-bold uppercase px-1.5 py-0.5 rounded border border-[var(--border-color)] text-[var(--text-secondary)] bg-[var(--bg-tertiary)]';
       } else {
         if (changePct > 0) {
           metricDailyChange.innerText = `+${changePct}% vs yesterday`;
-          metricDailyChange.className = 'inline-flex items-center text-xs font-semibold px-2.5 py-0.5 rounded-full bg-red-500/10 text-red-500 border border-red-500/20';
+          metricDailyChange.className = 'inline-flex items-center text-3xs font-bold uppercase px-1.5 py-0.5 rounded border border-[var(--accent-red)]/30 text-[var(--accent-red)] bg-[var(--accent-red)]/5';
         } else if (changePct < 0) {
           metricDailyChange.innerText = `${changePct}% vs yesterday`;
-          metricDailyChange.className = 'inline-flex items-center text-xs font-semibold px-2.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-500 border border-emerald-500/20';
+          metricDailyChange.className = 'inline-flex items-center text-3xs font-bold uppercase px-1.5 py-0.5 rounded border border-[var(--accent-green)]/30 text-[var(--accent-green)] bg-[var(--accent-green)]/5';
         } else {
-          metricDailyChange.innerText = 'Stable (0.0%)';
-          metricDailyChange.className = 'inline-flex items-center text-xs font-semibold px-2.5 py-0.5 rounded-full bg-slate-500/10 text-slate-500 border border-slate-500/20';
+          metricDailyChange.innerText = 'STABLE (0.0%)';
+          metricDailyChange.className = 'inline-flex items-center text-3xs font-bold uppercase px-1.5 py-0.5 rounded border border-[var(--border-color)] text-[var(--text-secondary)] bg-[var(--bg-tertiary)]';
         }
       }
 
-      // Calculate Cumulative (last 45 days)
-      const totalCases = series.reduce((sum, item) => sum + item.cases, 0);
+      // Calculate Cumulative (historical period)
+      const totalCases = historicalSeries.reduce((sum, item) => sum + item.cases, 0);
       metricCumulative.innerText = totalCases.toLocaleString();
     } else {
       metricDailyCases.innerText = '--';
@@ -217,14 +200,10 @@ document.addEventListener('DOMContentLoaded', () => {
       metricCumulative.innerText = '--';
     }
 
-    // Population
     metricPopulation.innerText = city.population.toLocaleString();
     metricLocation.innerText = `Coord: ${city.lat.toFixed(2)}°N, ${Math.abs(city.lng).toFixed(2)}°W`;
 
-    // Update Alerts List & Risk Profile
     updateAlertsSection();
-    
-    // Update Chart
     updateChart(series, pathogen.name);
   }
 
@@ -242,41 +221,32 @@ document.addEventListener('DOMContentLoaded', () => {
     
     const city = appData.metadata.cities.find(c => c.id === selectedCityId);
     
-    // Filter alerts
     let filteredAlerts = [];
     if (currentAlertFilter === 'local') {
       filteredAlerts = appData.alerts.filter(alert => {
-        // Matches current city exactly
         if (alert.city === selectedCityId) return true;
-        // Matches country if it is a general alert
         if (alert.city === 'All' && alert.country === city.country) return true;
-        // Matches global alert
         if (alert.city === 'All' && alert.country === 'Global') return true;
-        
         return false;
       });
     } else {
-      // Show everything
       filteredAlerts = appData.alerts;
     }
 
-    // Update active alert counter (only for current city context)
     const localAlerts = appData.alerts.filter(alert => 
       alert.city === selectedCityId || (alert.city === 'All' && alert.country === city.country)
     );
     activeAlertCount.innerText = localAlerts.length;
 
-    // Update Risk Level Indicator based on local alerts and metrics
     calculateRiskLevel(localAlerts);
 
-    // Build Alerts list HTML
     alertsContainer.innerHTML = '';
     
     if (filteredAlerts.length === 0) {
       alertsContainer.innerHTML = `
-        <div class="py-8 text-center text-xs text-[var(--text-muted)] flex flex-col items-center justify-center space-y-2">
-          <i data-lucide="info" class="w-8 h-8 text-[var(--text-muted)] opacity-60"></i>
-          <p>No active public health alerts for this selection.</p>
+        <div class="py-6 border border-dashed border-[var(--border-color)] text-center text-3xs uppercase tracking-wider font-bold text-[var(--text-muted)] flex flex-col items-center justify-center space-y-2">
+          <i data-lucide="info" class="w-5 h-5 text-[var(--text-muted)]"></i>
+          <p>No active public health alerts.</p>
         </div>
       `;
       if (window.lucide) window.lucide.createIcons();
@@ -287,52 +257,48 @@ document.addEventListener('DOMContentLoaded', () => {
       const isPathogenMatch = alert.pathogen === selectedPathogenId;
       const isCityMatch = alert.city === selectedCityId;
       
-      const cardBorder = isPathogenMatch && isCityMatch
-        ? 'border-2 border-indigo-500 shadow-md ring-1 ring-indigo-500/20'
-        : 'border border-[var(--border-glass)]';
+      const highlightBorder = isPathogenMatch && isCityMatch
+        ? 'border-l-4 border-l-[var(--accent-color)] border border-[var(--border-color)] bg-[var(--bg-primary)]'
+        : 'border-l-2 border border-[var(--border-color)]';
       
-      let badgeStyle = 'bg-blue-500/10 text-blue-500 border-blue-500/20';
+      let badgeStyle = 'border-blue-500/20 text-blue-500 bg-blue-500/5';
       let icon = 'info';
+      let alertClass = 'low';
       
       if (alert.risk_level === 'High') {
-        badgeStyle = 'bg-red-500/10 text-red-500 border-red-500/20';
+        badgeStyle = 'border-[var(--accent-red)]/20 text-[var(--accent-red)] bg-[var(--accent-red)]/5';
         icon = 'alert-triangle';
+        alertClass = 'high';
       } else if (alert.risk_level === 'Medium') {
-        badgeStyle = 'bg-amber-500/10 text-amber-500 border-amber-500/20';
+        badgeStyle = 'border-[var(--accent-yellow)]/20 text-[var(--accent-yellow)] bg-[var(--accent-yellow)]/5';
         icon = 'alert-circle';
+        alertClass = 'medium';
       }
 
-      // Format City Badge text
-      let cityBadgeText = '';
-      if (alert.city === 'All') {
-        cityBadgeText = `${alert.country} (National)`;
-      } else {
-        const c = appData.metadata.cities.find(x => x.id === alert.city);
-        cityBadgeText = c ? c.name : alert.city;
-      }
+      let cityBadgeText = alert.city === 'All' ? `${alert.country} (National)` : appData.metadata.cities.find(x => x.id === alert.city)?.name || alert.city;
 
       const alertElement = document.createElement('div');
-      alertElement.className = `glass-card p-4 rounded-xl flex flex-col md:flex-row md:items-start justify-between gap-3 ${cardBorder} transition-all duration-300`;
+      alertElement.className = `alert-strip ${alertClass} p-3.5 rounded-sm flex flex-col md:flex-row md:items-start justify-between gap-3 ${highlightBorder}`;
       alertElement.innerHTML = `
-        <div class="space-y-1.5 flex-grow">
-          <div class="flex flex-wrap items-center gap-2">
-            <span class="inline-flex items-center text-[10px] px-2 py-0.5 rounded-full font-bold uppercase tracking-wider border ${badgeStyle}">
-              <i data-lucide="${icon}" class="w-3 h-3 mr-1"></i>
+        <div class="space-y-1">
+          <div class="flex flex-wrap items-center gap-1.5">
+            <span class="inline-flex items-center text-[9px] px-1.5 py-0.5 font-bold uppercase tracking-wider border ${badgeStyle}">
+              <i data-lucide="${icon}" class="w-2.5 h-2.5 mr-1"></i>
               ${alert.risk_level}
             </span>
-            <span class="text-[10px] bg-slate-500/10 text-[var(--text-secondary)] border border-[var(--border-glass)] font-semibold px-2 py-0.5 rounded-full">
+            <span class="text-[9px] text-[var(--text-secondary)] border border-[var(--border-color)] bg-[var(--bg-tertiary)] font-bold px-1.5 py-0.5 rounded-sm">
               ${cityBadgeText}
             </span>
-            <span class="text-[10px] bg-indigo-500/10 text-indigo-500 border border-indigo-500/20 font-semibold px-2 py-0.5 rounded-full uppercase">
+            <span class="text-[9px] text-[var(--accent-color)] border border-[var(--accent-color)]/20 bg-[var(--accent-color)]/5 font-bold px-1.5 py-0.5 rounded-sm uppercase">
               ${alert.pathogen}
             </span>
           </div>
-          <h4 class="font-bold text-sm text-[var(--text-primary)]">${alert.title}</h4>
-          <p class="text-xs text-[var(--text-secondary)] leading-relaxed">${alert.summary}</p>
+          <h4 class="font-bold text-xs text-[var(--text-primary)]">${alert.title}</h4>
+          <p class="text-[10px] text-[var(--text-secondary)] leading-relaxed">${alert.summary}</p>
         </div>
-        <div class="flex flex-row md:flex-col items-start md:items-end justify-between md:justify-start flex-shrink-0 text-right mt-1 gap-1 border-t md:border-t-0 border-[var(--border-glass)] pt-2 md:pt-0">
-          <span class="text-[10px] font-semibold text-[var(--text-muted)]">${alert.date}</span>
-          <span class="text-[10px] font-bold text-indigo-500">${alert.source}</span>
+        <div class="flex flex-row md:flex-col items-center md:items-end justify-between md:justify-start flex-shrink-0 text-right text-3xs font-bold uppercase border-t md:border-t-0 border-[var(--border-color)] pt-1.5 md:pt-0 gap-1 text-[var(--text-muted)]">
+          <span>${alert.date}</span>
+          <span class="text-[var(--accent-color)]">${alert.source}</span>
         </div>
       `;
       alertsContainer.appendChild(alertElement);
@@ -346,88 +312,98 @@ document.addEventListener('DOMContentLoaded', () => {
   function calculateRiskLevel(localAlerts) {
     let severityScore = 0;
     
-    // High alert is score 3, Medium is 2, Low is 1
     localAlerts.forEach(a => {
       if (a.risk_level === 'High') severityScore += 3;
       else if (a.risk_level === 'Medium') severityScore += 2;
       else severityScore += 1;
     });
 
-    // Also look at latest change rate of the selected pathogen
     if (appData) {
       const cityTrends = appData.trends[selectedCityId];
       const series = cityTrends[selectedPathogenId] || [];
-      if (series.length > 0) {
-        const latestData = series[series.length - 1];
+      const historical = series.filter(item => item.cases !== null);
+      if (historical.length > 0) {
+        const latestData = historical[historical.length - 1];
         if (latestData.change_pct > 15.0 && latestData.cases > 10) {
-          severityScore += 1; // minor risk upgrade
+          severityScore += 1;
         }
       }
     }
 
-    // Determine badge style
     if (severityScore >= 4) {
-      // High Risk Profile
-      riskBadge.className = 'flex items-center px-3 py-1.5 rounded-xl border border-red-500/20 bg-red-500/10 text-red-500 font-bold text-xs danger-ring';
-      riskBadge.innerHTML = '<span class="w-2.5 h-2.5 rounded-full mr-2 bg-red-500 animate-pulse"></span>High Warning';
+      riskBadge.className = 'flex items-center px-2.5 py-1 rounded border border-[var(--accent-red)]/30 bg-[var(--accent-red)]/5 text-[var(--accent-red)] font-bold text-2xs uppercase tracking-wider';
+      riskBadge.innerHTML = '<span class="w-1.5 h-1.5 rounded-full mr-2 bg-[var(--accent-red)]"></span>High Warning';
     } else if (severityScore >= 1) {
-      // Medium Risk
-      riskBadge.className = 'flex items-center px-3 py-1.5 rounded-xl border border-amber-500/20 bg-amber-500/10 text-amber-500 font-bold text-xs';
-      riskBadge.innerHTML = '<span class="w-2.5 h-2.5 rounded-full mr-2 bg-amber-500 animate-pulse"></span>Medium Alert';
+      riskBadge.className = 'flex items-center px-2.5 py-1 rounded border border-[var(--accent-yellow)]/30 bg-[var(--accent-yellow)]/5 text-[var(--accent-yellow)] font-bold text-2xs uppercase tracking-wider';
+      riskBadge.innerHTML = '<span class="w-1.5 h-1.5 rounded-full mr-2 bg-[var(--accent-yellow)]"></span>Medium Alert';
     } else {
-      // Low Risk
-      riskBadge.className = 'flex items-center px-3 py-1.5 rounded-xl border border-emerald-500/20 bg-emerald-500/10 text-emerald-500 font-bold text-xs';
-      riskBadge.innerHTML = '<span class="w-2.5 h-2.5 rounded-full mr-2 bg-emerald-500"></span>Low Risk Profile';
+      riskBadge.className = 'flex items-center px-2.5 py-1 rounded border border-[var(--accent-green)]/30 bg-[var(--accent-green)]/5 text-[var(--accent-green)] font-bold text-2xs uppercase tracking-wider';
+      riskBadge.innerHTML = '<span class="w-1.5 h-1.5 rounded-full mr-2 bg-[var(--accent-green)]"></span>Low Risk Profile';
     }
   }
 
   function initChart() {
     const ctx = document.getElementById('trendChart').getContext('2d');
-    
-    // Get colors based on theme
     const isDark = document.documentElement.classList.contains('dark');
-    const gridColor = isDark ? 'rgba(255, 255, 255, 0.08)' : 'rgba(15, 23, 42, 0.06)';
-    const textColor = isDark ? '#94a3b8' : '#475569';
-    const primaryColor = isDark ? '#6366f1' : '#4f46e5';
+    const gridColor = isDark ? 'rgba(255, 255, 255, 0.05)' : 'rgba(9, 9, 11, 0.04)';
+    const textColor = isDark ? '#a1a1aa' : '#52525b';
+    const primaryColor = isDark ? '#3b82f6' : '#2563eb';
+    const modelLineColor = isDark ? '#52525b' : '#a1a1aa';
 
-    // Chart Configuration
     trendChart = new Chart(ctx, {
       type: 'line',
       data: {
         labels: [],
-        datasets: [{
-          label: '',
-          data: [],
-          borderColor: primaryColor,
-          borderWidth: 3,
-          pointBackgroundColor: primaryColor,
-          pointBorderColor: isDark ? '#0f172a' : '#ffffff',
-          pointBorderWidth: 2,
-          pointRadius: 2,
-          pointHoverRadius: 6,
-          fill: true,
-          tension: 0.4
-        }]
+        datasets: [
+          {
+            label: 'Reported Cases',
+            data: [],
+            borderColor: primaryColor,
+            borderWidth: 2,
+            pointBackgroundColor: primaryColor,
+            pointBorderColor: isDark ? '#09090b' : '#ffffff',
+            pointBorderWidth: 1.5,
+            pointRadius: 0,
+            pointHoverRadius: 5,
+            fill: false,
+            tension: 0.15
+          },
+          {
+            label: 'Model Projection',
+            data: [],
+            borderColor: modelLineColor,
+            borderWidth: 1.5,
+            borderDash: [5, 5],
+            pointBackgroundColor: modelLineColor,
+            pointBorderColor: isDark ? '#09090b' : '#ffffff',
+            pointBorderWidth: 1,
+            pointRadius: 0,
+            pointHoverRadius: 4,
+            fill: false,
+            tension: 0.15
+          }
+        ]
       },
       options: {
         responsive: true,
         maintainAspectRatio: false,
         plugins: {
           legend: {
-            display: false
+            display: false // We use our custom legend in HTML
           },
           tooltip: {
             mode: 'index',
             intersect: false,
-            backgroundColor: isDark ? 'rgba(15, 23, 42, 0.95)' : 'rgba(255, 255, 255, 0.95)',
-            titleColor: isDark ? '#f8fafc' : '#0f172a',
-            bodyColor: isDark ? '#94a3b8' : '#475569',
-            borderColor: isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(15, 23, 42, 0.08)',
+            backgroundColor: isDark ? '#121215' : '#ffffff',
+            titleColor: isDark ? '#fafafa' : '#09090b',
+            bodyColor: isDark ? '#a1a1aa' : '#52525b',
+            borderColor: isDark ? '#27272a' : '#e4e4e7',
             borderWidth: 1,
-            padding: 10,
-            cornerRadius: 12,
+            padding: 8,
+            cornerRadius: 4,
             font: {
-              family: 'Inter, sans-serif'
+              family: 'Inter, sans-serif',
+              size: 11
             },
             callbacks: {
               label: function(context) {
@@ -436,7 +412,9 @@ document.addEventListener('DOMContentLoaded', () => {
                   label += ': ';
                 }
                 if (context.parsed.y !== null) {
-                  label += context.parsed.y.toLocaleString() + ' daily reports';
+                  label += Math.round(context.parsed.y).toLocaleString() + ' cases';
+                } else {
+                  label += 'No passive reports';
                 }
                 return label;
               }
@@ -452,7 +430,8 @@ document.addEventListener('DOMContentLoaded', () => {
               color: textColor,
               font: {
                 family: 'Inter, sans-serif',
-                size: 10
+                size: 9,
+                weight: 'bold'
               },
               maxRotation: 0,
               autoSkip: true,
@@ -467,7 +446,8 @@ document.addEventListener('DOMContentLoaded', () => {
               color: textColor,
               font: {
                 family: 'Inter, sans-serif',
-                size: 10
+                size: 9,
+                weight: 'bold'
               },
               callback: function(value) {
                 if (value >= 1000) {
@@ -486,7 +466,6 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!trendChart || series.length === 0) return;
 
     const labels = series.map(d => {
-      // Format label e.g., "Jun 8"
       const dateParts = d.date.split('-');
       if (dateParts.length === 3) {
         const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
@@ -496,27 +475,19 @@ document.addEventListener('DOMContentLoaded', () => {
       return d.date;
     });
     
-    const dataPoints = series.map(d => d.cases);
+    // Observed Reported Cases stops when d.cases is null (in the future)
+    const reportedPoints = series.map(d => d.cases);
+    // Model baseline runs for all points
+    const modelPoints = series.map(d => d.model_projected);
 
-    // Update Dataset Details
     trendChart.data.labels = labels;
-    trendChart.data.datasets[0].label = pathogenName;
-    trendChart.data.datasets[0].data = dataPoints;
-
-    // Apply gradient fill below curve
-    const isDark = document.documentElement.classList.contains('dark');
-    const ctx = document.getElementById('trendChart').getContext('2d');
-    const gradient = ctx.createLinearGradient(0, 0, 0, 300);
     
-    if (isDark) {
-      gradient.addColorStop(0, 'rgba(99, 102, 241, 0.45)');
-      gradient.addColorStop(1, 'rgba(99, 102, 241, 0.0)');
-    } else {
-      gradient.addColorStop(0, 'rgba(79, 70, 229, 0.35)');
-      gradient.addColorStop(1, 'rgba(79, 70, 229, 0.0)');
-    }
+    // Dataset 0: Observed reported cases
+    trendChart.data.datasets[0].data = reportedPoints;
     
-    trendChart.data.datasets[0].backgroundColor = gradient;
+    // Dataset 1: Model forecast
+    trendChart.data.datasets[1].data = modelPoints;
+    
     trendChart.update();
   }
 
@@ -524,37 +495,28 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!trendChart) return;
 
     const isDark = document.documentElement.classList.contains('dark');
-    const gridColor = isDark ? 'rgba(255, 255, 255, 0.08)' : 'rgba(15, 23, 42, 0.06)';
-    const textColor = isDark ? '#94a3b8' : '#475569';
-    const primaryColor = isDark ? '#6366f1' : '#4f46e5';
+    const gridColor = isDark ? 'rgba(255, 255, 255, 0.05)' : 'rgba(9, 9, 11, 0.04)';
+    const textColor = isDark ? '#a1a1aa' : '#52525b';
+    const primaryColor = isDark ? '#3b82f6' : '#2563eb';
+    const modelLineColor = isDark ? '#52525b' : '#a1a1aa';
 
-    // Update colors in scales
     trendChart.options.scales.x.ticks.color = textColor;
     trendChart.options.scales.y.ticks.color = textColor;
     trendChart.options.scales.y.grid.color = gridColor;
 
-    // Update dataset colors
     trendChart.data.datasets[0].borderColor = primaryColor;
     trendChart.data.datasets[0].pointBackgroundColor = primaryColor;
-    trendChart.data.datasets[0].pointBorderColor = isDark ? '#0f172a' : '#ffffff';
+    trendChart.data.datasets[0].pointBorderColor = isDark ? '#09090b' : '#ffffff';
 
-    // Tooltip colors
-    trendChart.options.plugins.tooltip.backgroundColor = isDark ? 'rgba(15, 23, 42, 0.95)' : 'rgba(255, 255, 255, 0.95)';
-    trendChart.options.plugins.tooltip.titleColor = isDark ? '#f8fafc' : '#0f172a';
-    trendChart.options.plugins.tooltip.bodyColor = isDark ? '#94a3b8' : '#475569';
-    trendChart.options.plugins.tooltip.borderColor = isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(15, 23, 42, 0.08)';
+    trendChart.data.datasets[1].borderColor = modelLineColor;
+    trendChart.data.datasets[1].pointBackgroundColor = modelLineColor;
+    trendChart.data.datasets[1].pointBorderColor = isDark ? '#09090b' : '#ffffff';
 
-    // Update chart background gradient
-    const ctx = document.getElementById('trendChart').getContext('2d');
-    const gradient = ctx.createLinearGradient(0, 0, 0, 300);
-    if (isDark) {
-      gradient.addColorStop(0, 'rgba(99, 102, 241, 0.45)');
-      gradient.addColorStop(1, 'rgba(99, 102, 241, 0.0)');
-    } else {
-      gradient.addColorStop(0, 'rgba(79, 70, 229, 0.35)');
-      gradient.addColorStop(1, 'rgba(79, 70, 229, 0.0)');
-    }
-    trendChart.data.datasets[0].backgroundColor = gradient;
+    trendChart.options.plugins.tooltip.backgroundColor = isDark ? '#121215' : '#ffffff';
+    trendChart.options.plugins.tooltip.titleColor = isDark ? '#fafafa' : '#09090b';
+    trendChart.options.plugins.tooltip.bodyColor = isDark ? '#a1a1aa' : '#52525b';
+    trendChart.options.plugins.tooltip.borderColor = isDark ? '#27272a' : '#e4e4e7';
+
     trendChart.update();
   }
 });
