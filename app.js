@@ -1,6 +1,10 @@
 document.addEventListener('DOMContentLoaded', () => {
   // DOM Elements
-  const citySelect = document.getElementById('citySelect');
+  const citySearch = document.getElementById('citySearch');
+  const cityList = document.getElementById('cityList');
+  const btnSelectAll = document.getElementById('btnSelectAll');
+  const btnClearAll = document.getElementById('btnClearAll');
+  
   const pathogenSelect = document.getElementById('pathogenSelect');
   const cityName = document.getElementById('cityName');
   const cityFlag = document.getElementById('cityFlag');
@@ -21,10 +25,30 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Application State
   let appData = null;
-  let selectedCityId = 'boston'; // Default selection
+  let selectedCityIds = []; // Active checked cities
   let selectedPathogenId = 'covid19'; // Default selection
   let currentAlertFilter = 'local'; // 'local' or 'all'
   let trendChart = null;
+
+  // Modern functional color palette for multi-city comparisons
+  const COLOR_PALETTE = [
+    '#2563eb', // Cobalt Blue
+    '#dc2626', // Vermillion Red
+    '#16a34a', // Emerald Green
+    '#ea580c', // Orange
+    '#9333ea', // Purple
+    '#0d9488', // Teal
+    '#db2777', // Magenta
+    '#d97706', // Amber
+    '#4f46e5', // Indigo
+    '#e11d48', // Rose
+    '#0891b2', // Cyan
+    '#059669', // Mint
+    '#ca8a04', // Olive/Gold
+    '#7c3aed', // Violet
+    '#4b5563', // Zinc/Gray
+    '#1e293b'  // Slate
+  ];
 
   // Initialize App
   init();
@@ -48,14 +72,16 @@ document.addEventListener('DOMContentLoaded', () => {
         reportDate.innerText = `Report Date: ${data.metadata.report_date}`;
         
         // 3. Populate Selection Lists
+        // Default: Start with ALL cities selected (Aggregate View)
+        selectedCityIds = data.metadata.cities.map(c => c.id);
         populateDropdowns();
+        populateCityChecklist();
         
-        // 4. Set Initial Values & Setup Chart.js
-        citySelect.value = selectedCityId;
         pathogenSelect.value = selectedPathogenId;
         
-        // Initialize Chart
+        // 4. Initialize Chart & Gamification
         initChart();
+        setupGamification();
         
         // 5. Update UI
         updateView();
@@ -105,14 +131,6 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function populateDropdowns() {
-    citySelect.innerHTML = '';
-    appData.metadata.cities.forEach(city => {
-      const option = document.createElement('option');
-      option.value = city.id;
-      option.text = `${city.name} (${city.country})`;
-      citySelect.appendChild(option);
-    });
-
     pathogenSelect.innerHTML = '';
     appData.metadata.pathogens.forEach(p => {
       const option = document.createElement('option');
@@ -122,14 +140,105 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  function populateCityChecklist() {
+    cityList.innerHTML = '';
+    appData.metadata.cities.forEach(city => {
+      const label = document.createElement('label');
+      label.className = 'flex items-center space-x-2.5 py-1 px-1 rounded hover:bg-[var(--bg-tertiary)] cursor-pointer select-none transition-colors duration-100';
+      label.dataset.cityId = city.id;
+      label.dataset.cityName = city.name.toLowerCase();
+      
+      const checkbox = document.createElement('input');
+      checkbox.type = 'checkbox';
+      checkbox.value = city.id;
+      checkbox.checked = selectedCityIds.includes(city.id);
+      checkbox.className = 'rounded border-[var(--border-color)] bg-[var(--bg-primary)] text-[var(--accent-color)] focus:ring-0';
+      
+      checkbox.addEventListener('change', (e) => {
+        if (e.target.checked) {
+          if (!selectedCityIds.includes(city.id)) {
+            selectedCityIds.push(city.id);
+          }
+        } else {
+          selectedCityIds = selectedCityIds.filter(id => id !== city.id);
+        }
+        updateView();
+      });
+      
+      const span = document.createElement('span');
+      span.className = 'font-medium';
+      span.innerText = `${getFlagEmoji(city.country)} ${city.name}`;
+      
+      label.appendChild(checkbox);
+      label.appendChild(span);
+      cityList.appendChild(label);
+    });
+  }
+
+  function setupGamification() {
+    const questPercent = document.getElementById('shieldPercent');
+    const questBar = document.getElementById('shieldBar');
+    const questLevel = document.getElementById('shieldLevel');
+    const checkboxes = document.querySelectorAll('.quest-item');
+    
+    checkboxes.forEach(cb => {
+      cb.addEventListener('change', () => {
+        let totalPoints = 0;
+        checkboxes.forEach(item => {
+          if (item.checked) {
+            totalPoints += parseInt(item.dataset.points);
+          }
+        });
+        
+        questPercent.innerText = `${totalPoints}%`;
+        questBar.style.width = `${totalPoints}%`;
+        
+        if (totalPoints >= 75) {
+          questLevel.innerText = 'Invincible Gladiator 🏆';
+          questLevel.className = 'text-[var(--accent-green)] font-extrabold';
+        } else if (totalPoints >= 30) {
+          questLevel.innerText = 'Shield Guard 🛡️⚔️';
+          questLevel.className = 'text-[var(--accent-yellow)] font-extrabold';
+        } else {
+          questLevel.innerText = 'Vulnerable Fan 🛡️';
+          questLevel.className = 'text-[var(--accent-red)] font-extrabold';
+        }
+      });
+    });
+  }
+
   function bindEvents() {
-    citySelect.addEventListener('change', (e) => {
-      selectedCityId = e.target.value;
+    pathogenSelect.addEventListener('change', (e) => {
+      selectedPathogenId = e.target.value;
       updateView();
     });
 
-    pathogenSelect.addEventListener('change', (e) => {
-      selectedPathogenId = e.target.value;
+    // Local Search Input
+    citySearch.addEventListener('input', (e) => {
+      const query = e.target.value.toLowerCase().trim();
+      const labels = cityList.querySelectorAll('label');
+      labels.forEach(label => {
+        const cityNameText = label.dataset.cityName;
+        if (cityNameText.includes(query)) {
+          label.style.display = 'flex';
+        } else {
+          label.style.display = 'none';
+        }
+      });
+    });
+
+    // Select All / Clear All Action Links
+    btnSelectAll.addEventListener('click', () => {
+      selectedCityIds = appData.metadata.cities.map(c => c.id);
+      const checkboxes = cityList.querySelectorAll('input[type="checkbox"]');
+      checkboxes.forEach(cb => cb.checked = true);
+      updateView();
+    });
+
+    btnClearAll.addEventListener('click', () => {
+      selectedCityIds = [];
+      const checkboxes = cityList.querySelectorAll('input[type="checkbox"]');
+      checkboxes.forEach(cb => cb.checked = false);
       updateView();
     });
 
@@ -153,32 +262,115 @@ document.addEventListener('DOMContentLoaded', () => {
   function updateView() {
     if (!appData) return;
 
-    const city = appData.metadata.cities.find(c => c.id === selectedCityId);
     const pathogen = appData.metadata.pathogens.find(p => p.id === selectedPathogenId);
-
-    cityName.innerText = city.name;
-    cityCountry.innerText = city.country;
-    cityFlag.innerText = getFlagEmoji(city.country);
     pathogenDesc.innerText = pathogen.description;
 
-    const cityTrends = appData.trends[selectedCityId];
-    const series = cityTrends[selectedPathogenId] || [];
-
-    // Filter historical points to find latest metrics
-    const historicalSeries = series.filter(item => item.cases !== null);
-
-    if (historicalSeries.length > 0) {
-      const latestData = historicalSeries[historicalSeries.length - 1];
-      const dailyCasesVal = latestData.cases;
-      const changePct = latestData.change_pct;
-
-      metricDailyCases.innerText = dailyCasesVal.toLocaleString();
+    // 1. Update Layout Details based on selected cities list
+    const selectedCitiesCount = selectedCityIds.length;
+    
+    if (selectedCitiesCount === 0) {
+      cityName.innerText = 'No Cities Selected';
+      cityCountry.innerText = 'N/A';
+      cityFlag.innerText = '⚠️';
       
-      // Minimal, functional styling of trend badge
-      if (selectedPathogenId === 'ebola' && dailyCasesVal === 0) {
-        metricDailyChange.innerText = 'STABLE (0)';
-        metricDailyChange.className = 'inline-flex items-center text-3xs font-bold uppercase px-1.5 py-0.5 rounded border border-[var(--border-color)] text-[var(--text-secondary)] bg-[var(--bg-tertiary)]';
-      } else {
+      metricDailyCases.innerText = '--';
+      metricDailyChange.innerText = '--';
+      metricCumulative.innerText = '--';
+      metricPopulation.innerText = '0';
+      metricLocation.innerText = 'Select at least one city in the list.';
+      
+      activeAlertCount.innerText = '0';
+      riskBadge.className = 'flex items-center px-2.5 py-1 rounded border border-[var(--border-color)] bg-[var(--bg-tertiary)] text-[var(--text-secondary)] font-bold text-2xs uppercase tracking-wider';
+      riskBadge.innerHTML = 'Select Location';
+      
+      alertsContainer.innerHTML = `
+        <div class="py-6 border border-dashed border-[var(--border-color)] text-center text-3xs uppercase tracking-wider font-bold text-[var(--text-muted)]">
+          <p>Please check one or more cities to aggregate surveillance alerts.</p>
+        </div>
+      `;
+      if (trendChart) {
+        trendChart.data.labels = [];
+        trendChart.data.datasets = [];
+        trendChart.update();
+      }
+      return;
+    }
+
+    const firstCity = appData.metadata.cities.find(c => c.id === selectedCityIds[0]);
+
+    if (selectedCitiesCount === 1) {
+      cityName.innerText = firstCity.name;
+      cityCountry.innerText = firstCity.country;
+      cityFlag.innerText = getFlagEmoji(firstCity.country);
+      metricLocation.innerText = `Coord: ${firstCity.lat.toFixed(2)}°N, ${Math.abs(firstCity.lng).toFixed(2)}°W`;
+    } else if (selectedCitiesCount === appData.metadata.cities.length) {
+      cityName.innerText = 'All Cities';
+      cityCountry.innerText = 'Aggregate';
+      cityFlag.innerText = '🌎';
+      metricLocation.innerText = 'All 16 World Cup host sites aggregated';
+    } else {
+      cityName.innerText = `${selectedCitiesCount} Selected Cities`;
+      cityCountry.innerText = 'Comparison';
+      cityFlag.innerText = '🌎';
+      metricLocation.innerText = 'Custom comparative baseline cohort';
+    }
+
+    // 2. Aggregate Population and Case Counts
+    let aggregatePopulation = 0;
+    selectedCityIds.forEach(id => {
+      const city = appData.metadata.cities.find(c => c.id === id);
+      if (city) {
+        aggregatePopulation += city.population;
+      }
+    });
+    metricPopulation.innerText = aggregatePopulation.toLocaleString();
+
+    // Summing daily historical trends
+    const numDays = appData.trends[selectedCityIds[0]][selectedPathogenId].length;
+    let aggregatedReportedSeries = [];
+    
+    for (let dayIdx = 0; dayIdx < numDays; dayIdx++) {
+      const sampleItem = appData.trends[selectedCityIds[0]][selectedPathogenId][dayIdx];
+      const dateStr = sampleItem.date;
+      
+      let sumCases = 0;
+      let sumModel = 0;
+      let isHistorical = sampleItem.cases !== null;
+      
+      selectedCityIds.forEach(cityId => {
+        const item = appData.trends[cityId][selectedPathogenId][dayIdx];
+        if (item) {
+          if (isHistorical) sumCases += item.cases;
+          sumModel += item.model_projected;
+        }
+      });
+
+      aggregatedReportedSeries.push({
+        date: dateStr,
+        cases: isHistorical ? sumCases : null,
+        model_projected: sumModel
+      });
+    }
+
+    // Latest Metrics calculation
+    const historicalOnly = aggregatedReportedSeries.filter(d => d.cases !== null);
+    
+    if (historicalOnly.length > 0) {
+      const latestData = historicalOnly[historicalOnly.length - 1];
+      const prevData = historicalOnly[historicalOnly.length - 2];
+      
+      const sumCasesYesterday = latestData.cases;
+      metricDailyCases.innerText = sumCasesYesterday.toLocaleString();
+
+      // Cumulative
+      const sumCumulative = historicalOnly.reduce((sum, d) => sum + d.cases, 0);
+      metricCumulative.innerText = sumCumulative.toLocaleString();
+
+      // Aggregate Change % Calculation
+      if (prevData && prevData.cases > 0) {
+        const diff = sumCasesYesterday - prevData.cases;
+        const changePct = round(((diff) / prevData.cases) * 100.0, 1);
+        
         if (changePct > 0) {
           metricDailyChange.innerText = `+${changePct}% vs yesterday`;
           metricDailyChange.className = 'inline-flex items-center text-3xs font-bold uppercase px-1.5 py-0.5 rounded border border-[var(--accent-red)]/30 text-[var(--accent-red)] bg-[var(--accent-red)]/5';
@@ -189,22 +381,20 @@ document.addEventListener('DOMContentLoaded', () => {
           metricDailyChange.innerText = 'STABLE (0.0%)';
           metricDailyChange.className = 'inline-flex items-center text-3xs font-bold uppercase px-1.5 py-0.5 rounded border border-[var(--border-color)] text-[var(--text-secondary)] bg-[var(--bg-tertiary)]';
         }
+      } else {
+        metricDailyChange.innerText = 'STABLE (0.0%)';
       }
-
-      // Calculate Cumulative (historical period)
-      const totalCases = historicalSeries.reduce((sum, item) => sum + item.cases, 0);
-      metricCumulative.innerText = totalCases.toLocaleString();
     } else {
       metricDailyCases.innerText = '--';
       metricDailyChange.innerText = '--';
       metricCumulative.innerText = '--';
     }
 
-    metricPopulation.innerText = city.population.toLocaleString();
-    metricLocation.innerText = `Coord: ${city.lat.toFixed(2)}°N, ${Math.abs(city.lng).toFixed(2)}°W`;
-
+    // 3. Alerts & Risk Profile calculation
     updateAlertsSection();
-    updateChart(series, pathogen.name);
+    
+    // 4. Update dynamic chart rendering
+    updateChartData(aggregatedReportedSeries, pathogen.name);
   }
 
   function getFlagEmoji(country) {
@@ -219,13 +409,18 @@ document.addEventListener('DOMContentLoaded', () => {
   function updateAlertsSection() {
     if (!appData) return;
     
-    const city = appData.metadata.cities.find(c => c.id === selectedCityId);
+    const countriesOfSelectedCities = [
+      ...new Set(appData.metadata.cities.filter(c => selectedCityIds.includes(c.id)).map(c => c.country))
+    ];
     
     let filteredAlerts = [];
     if (currentAlertFilter === 'local') {
       filteredAlerts = appData.alerts.filter(alert => {
-        if (alert.city === selectedCityId) return true;
-        if (alert.city === 'All' && alert.country === city.country) return true;
+        // City matches active checked cohort
+        if (selectedCityIds.includes(alert.city)) return true;
+        // Matches national warnings of active cohort countries
+        if (alert.city === 'All' && countriesOfSelectedCities.includes(alert.country)) return true;
+        // Global alert
         if (alert.city === 'All' && alert.country === 'Global') return true;
         return false;
       });
@@ -234,7 +429,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     const localAlerts = appData.alerts.filter(alert => 
-      alert.city === selectedCityId || (alert.city === 'All' && alert.country === city.country)
+      selectedCityIds.includes(alert.city) || (alert.city === 'All' && countriesOfSelectedCities.includes(alert.country))
     );
     activeAlertCount.innerText = localAlerts.length;
 
@@ -255,7 +450,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     filteredAlerts.forEach(alert => {
       const isPathogenMatch = alert.pathogen === selectedPathogenId;
-      const isCityMatch = alert.city === selectedCityId;
+      const isCityMatch = selectedCityIds.includes(alert.city);
       
       const highlightBorder = isPathogenMatch && isCityMatch
         ? 'border-l-4 border-l-[var(--accent-color)] border border-[var(--border-color)] bg-[var(--bg-primary)]'
@@ -321,18 +516,6 @@ document.addEventListener('DOMContentLoaded', () => {
       else severityScore += 1;
     });
 
-    if (appData) {
-      const cityTrends = appData.trends[selectedCityId];
-      const series = cityTrends[selectedPathogenId] || [];
-      const historical = series.filter(item => item.cases !== null);
-      if (historical.length > 0) {
-        const latestData = historical[historical.length - 1];
-        if (latestData.change_pct > 15.0 && latestData.cases > 10) {
-          severityScore += 1;
-        }
-      }
-    }
-
     if (severityScore >= 4) {
       riskBadge.className = 'flex items-center px-2.5 py-1 rounded border border-[var(--accent-red)]/30 bg-[var(--accent-red)]/5 text-[var(--accent-red)] font-bold text-2xs uppercase tracking-wider';
       riskBadge.innerHTML = '<span class="w-1.5 h-1.5 rounded-full mr-2 bg-[var(--accent-red)]"></span>High Warning';
@@ -350,49 +533,19 @@ document.addEventListener('DOMContentLoaded', () => {
     const isDark = document.documentElement.classList.contains('dark');
     const gridColor = isDark ? 'rgba(255, 255, 255, 0.05)' : 'rgba(9, 9, 11, 0.04)';
     const textColor = isDark ? '#a1a1aa' : '#52525b';
-    const primaryColor = isDark ? '#3b82f6' : '#2563eb';
-    const modelLineColor = isDark ? '#52525b' : '#a1a1aa';
 
     trendChart = new Chart(ctx, {
       type: 'line',
       data: {
         labels: [],
-        datasets: [
-          {
-            label: 'Reported Cases',
-            data: [],
-            borderColor: primaryColor,
-            borderWidth: 2,
-            pointBackgroundColor: primaryColor,
-            pointBorderColor: isDark ? '#09090b' : '#ffffff',
-            pointBorderWidth: 1.5,
-            pointRadius: 0,
-            pointHoverRadius: 5,
-            fill: false,
-            tension: 0.15
-          },
-          {
-            label: 'Model Projection',
-            data: [],
-            borderColor: modelLineColor,
-            borderWidth: 1.5,
-            borderDash: [5, 5],
-            pointBackgroundColor: modelLineColor,
-            pointBorderColor: isDark ? '#09090b' : '#ffffff',
-            pointBorderWidth: 1,
-            pointRadius: 0,
-            pointHoverRadius: 4,
-            fill: false,
-            tension: 0.15
-          }
-        ]
+        datasets: []
       },
       options: {
         responsive: true,
         maintainAspectRatio: false,
         plugins: {
           legend: {
-            display: false // We use our custom legend in HTML
+            display: false // Using custom legends in HTML or chart tools
           },
           tooltip: {
             mode: 'index',
@@ -465,10 +618,16 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  function updateChart(series, pathogenName) {
-    if (!trendChart || series.length === 0) return;
+  function getCityColor(cityId) {
+    const idx = appData.metadata.cities.findIndex(c => c.id === cityId);
+    return COLOR_PALETTE[idx % COLOR_PALETTE.length];
+  }
 
-    const labels = series.map(d => {
+  function updateChartData(aggregatedSeries, pathogenName) {
+    if (!trendChart) return;
+
+    // Define X-Axis Dates Labels
+    const labels = aggregatedSeries.map(d => {
       const dateParts = d.date.split('-');
       if (dateParts.length === 3) {
         const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
@@ -478,48 +637,102 @@ document.addEventListener('DOMContentLoaded', () => {
       return d.date;
     });
     
-    // Observed Reported Cases stops when d.cases is null (in the future)
-    const reportedPoints = series.map(d => d.cases);
-    // Model baseline runs for all points
-    const modelPoints = series.map(d => d.model_projected);
-
     trendChart.data.labels = labels;
     
-    // Dataset 0: Observed reported cases
-    trendChart.data.datasets[0].data = reportedPoints;
-    
-    // Dataset 1: Model forecast
-    trendChart.data.datasets[1].data = modelPoints;
-    
+    const isDark = document.documentElement.classList.contains('dark');
+    const primaryColor = isDark ? '#3b82f6' : '#2563eb';
+    const modelLineColor = isDark ? '#52525b' : '#a1a1aa';
+
+    // Clear old datasets
+    trendChart.data.datasets = [];
+
+    // CASE 1: Aggregate All View (If all 16 cities selected)
+    if (selectedCityIds.length === appData.metadata.cities.length) {
+      trendChart.data.datasets.push(
+        {
+          label: 'All Cities (Reported)',
+          data: aggregatedSeries.map(d => d.cases),
+          borderColor: primaryColor,
+          borderWidth: 2.5,
+          pointRadius: 0,
+          pointHoverRadius: 5,
+          fill: false,
+          tension: 0.15
+        },
+        {
+          label: 'All Cities (Model Projection)',
+          data: aggregatedSeries.map(d => d.model_projected),
+          borderColor: modelLineColor,
+          borderWidth: 1.5,
+          borderDash: [5, 5],
+          pointRadius: 0,
+          pointHoverRadius: 4,
+          fill: false,
+          tension: 0.15
+        }
+      );
+    } 
+    // CASE 2: Comparative Cohort View
+    else {
+      // Loop over each selected city and add a distinct line
+      selectedCityIds.forEach(cityId => {
+        const cityObj = appData.metadata.cities.find(c => c.id === cityId);
+        const cityColor = getCityColor(cityId);
+        const cityTrends = appData.trends[cityId][selectedPathogenId] || [];
+        
+        // Add Reported dataset
+        trendChart.data.datasets.push({
+          label: `${cityObj.name} (Reported)`,
+          data: cityTrends.map(d => d.cases),
+          borderColor: cityColor,
+          borderWidth: 2,
+          pointRadius: 0,
+          pointHoverRadius: 5,
+          fill: false,
+          tension: 0.15
+        });
+
+        // HIDE projections dataset if more than 2 cities are selected to avoid clutter
+        if (selectedCityIds.length <= 2) {
+          trendChart.data.datasets.push({
+            label: `${cityObj.name} (Model Projection)`,
+            data: cityTrends.map(d => d.model_projected),
+            borderColor: cityColor,
+            borderWidth: 1,
+            borderDash: [4, 4],
+            pointRadius: 0,
+            pointHoverRadius: 4,
+            fill: false,
+            tension: 0.15
+          });
+        }
+      });
+    }
+
     trendChart.update();
   }
 
   function updateChartColors() {
-    if (!trendChart) return;
+    if (!trendChart || !appData) return;
 
     const isDark = document.documentElement.classList.contains('dark');
     const gridColor = isDark ? 'rgba(255, 255, 255, 0.05)' : 'rgba(9, 9, 11, 0.04)';
     const textColor = isDark ? '#a1a1aa' : '#52525b';
-    const primaryColor = isDark ? '#3b82f6' : '#2563eb';
-    const modelLineColor = isDark ? '#52525b' : '#a1a1aa';
 
     trendChart.options.scales.x.ticks.color = textColor;
     trendChart.options.scales.y.ticks.color = textColor;
     trendChart.options.scales.y.grid.color = gridColor;
-
-    trendChart.data.datasets[0].borderColor = primaryColor;
-    trendChart.data.datasets[0].pointBackgroundColor = primaryColor;
-    trendChart.data.datasets[0].pointBorderColor = isDark ? '#09090b' : '#ffffff';
-
-    trendChart.data.datasets[1].borderColor = modelLineColor;
-    trendChart.data.datasets[1].pointBackgroundColor = modelLineColor;
-    trendChart.data.datasets[1].pointBorderColor = isDark ? '#09090b' : '#ffffff';
 
     trendChart.options.plugins.tooltip.backgroundColor = isDark ? '#121215' : '#ffffff';
     trendChart.options.plugins.tooltip.titleColor = isDark ? '#fafafa' : '#09090b';
     trendChart.options.plugins.tooltip.bodyColor = isDark ? '#a1a1aa' : '#52525b';
     trendChart.options.plugins.tooltip.borderColor = isDark ? '#27272a' : '#e4e4e7';
 
-    trendChart.update();
+    // Refresh display
+    updateView();
+  }
+
+  function round(value, decimals) {
+    return Number(Math.round(value + 'e' + decimals) + 'e-' + decimals);
   }
 });

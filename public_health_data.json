@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "last_updated": "2026-06-09T16:04:46Z",
+    "last_updated": "2026-06-09T21:39:51Z",
     "report_date": "2026-06-08",
     "cities": [
       {
@@ -185,18 +185,6 @@
   },
   "alerts": [
     {
-      "id": "0377c7493d",
-      "date": "2026-06-09",
-      "city": "All",
-      "country": "Global",
-      "pathogen": "dengue",
-      "title": "Venezuela - Level 3: Reconsider Travel",
-      "summary": "Reconsider travelto Venezuela due\u00a0to\u00a0risk of\u00a0crime,\u00a0kidnapping,\u00a0terrorism,\u00a0and\u00a0poor health infrastructure.\u00a0Some areas have increased risk. Read the entire Travel Advisory.\u202f\nU.S. embassy operations\nIn March 2026, the U.S. Department of State announced...",
-      "risk_level": "Medium",
-      "source": "US State Dept Advisories",
-      "link": "https://travel.state.gov/content/tsg_aem/us/en/home/international-travel/travel-advisories/destination.ven.html"
-    },
-    {
       "id": "4ddbb30684",
       "date": "2026-06-08",
       "city": "boston",
@@ -233,18 +221,6 @@
       "link": "https://www.toronto.ca/community-people/health-wellness-care/"
     },
     {
-      "id": "05374f1572",
-      "date": "2026-06-05",
-      "city": "All",
-      "country": "Canada",
-      "pathogen": "covid19",
-      "title": "Canada - Level 1: Exercise Normal Precautions",
-      "summary": "Exercise normal precautionin Canada.\nCanada is generally a safe destination for travelers.\nFor Americans traveling to Canada for FIFA World Cup 2026 matches, follow the latest guidance from the U.S. Embassy in Canada.\nCrime\n\nPetty crime is common, es...",
-      "risk_level": "Low",
-      "source": "US State Dept Advisories",
-      "link": "https://travel.state.gov/content/tsg_aem/us/en/home/international-travel/travel-advisories/destination.can.html"
-    },
-    {
       "id": "0ee1daaadc",
       "date": "2026-06-05",
       "city": "miami",
@@ -255,30 +231,6 @@
       "risk_level": "Medium",
       "source": "Florida Department of Health",
       "link": "https://www.floridahealth.gov/"
-    },
-    {
-      "id": "1781d37a41",
-      "date": "2026-06-04",
-      "city": "All",
-      "country": "Global",
-      "pathogen": "ebola",
-      "title": "Uganda - Level 4: Do Not Travel",
-      "summary": "Do not travelto Uganda due to crime, health, terrorism, and unrest. Please read the full text of the advisory.\nTravel restrictions for government employees\nThe U.S. government has limited ability to provide emergency consular services to U.S. citizen...",
-      "risk_level": "High",
-      "source": "US State Dept Advisories",
-      "link": "https://travel.state.gov/content/tsg_aem/us/en/home/international-travel/travel-advisories/destination.uga.html"
-    },
-    {
-      "id": "aed1b6f760",
-      "date": "2026-06-04",
-      "city": "All",
-      "country": "Global",
-      "pathogen": "ebola",
-      "title": "Rwanda - Level 3: Reconsider Travel",
-      "summary": "Reconsider travelin\u00a0Rwanda\u00a0due to\u00a0crime,\u00a0unrest\u00a0and\u00a0health\u00a0risks. Some areas have increased risk. Read the entire Travel Advisory.\nThe U.S. government has limited ability to provide emergency consular services to U.S. citizens in Rwanda due to the He...",
-      "risk_level": "Medium",
-      "source": "US State Dept Advisories",
-      "link": "https://travel.state.gov/content/tsg_aem/us/en/home/international-travel/travel-advisories/destination.rwa.html"
     },
     {
       "id": "a96166a6cc",
@@ -329,18 +281,6 @@
       "link": "http://publichealth.lacounty.gov/"
     },
     {
-      "id": "4f623156c7",
-      "date": "2026-05-29",
-      "city": "All",
-      "country": "Mexico",
-      "pathogen": "covid19",
-      "title": "Mexico Travel Advisory - Level 2: Exercise Increased Caution",
-      "summary": "Exercise increased cautionin Mexico due to terrorism, crime, and kidnapping.\u00a0Some areas have increased risk. Read the entire Travel Advisory.\nFor Americans traveling to Mexico for FIFA World Cup 2026 matches, follow the latest guidance from the U.S. ...",
-      "risk_level": "Low",
-      "source": "US State Dept Advisories",
-      "link": "https://travel.state.gov/content/tsg_aem/us/en/home/international-travel/travel-advisories/destination.mex.html"
-    },
-    {
       "id": "48219fd368",
       "date": "2026-05-17",
       "city": "All",
@@ -353,16 +293,52 @@
       "link": "https://travel.state.gov/content/tsg_aem/us/en/home/international-travel/travel-advisories/destination.ssd.html"
     },
     {
+      "id": "0377c7493d",
+      "date": "2026-03-19",
+      "city": "All",
+      "country": "Global",
+      "pathogen": "dengue",
+      "title": "Venezuela - Level 3: Reconsider Travel",
+      "summary": "The travel advisory level&nbsp;decreased&nbsp;to 3. The &#8220;Wrongful Detention,&#8221; &#8220;Unrest,&#8221;&nbsp;and &#8220;Other&#8221; risk indicators were removed.&nbsp;Areas&nbsp;of increased risk&nbsp;were&nbsp;added. Advisory summary was up...",
+      "risk_level": "Medium",
+      "source": "US State Dept Advisories",
+      "link": "https://travel.state.gov/content/travel/en/traveladvisories/traveladvisories/venezuela-travel-advisory.html"
+    },
+    {
       "id": "20b1e6ee62",
       "date": "2025-12-19",
       "city": "All",
       "country": "Global",
       "pathogen": "measles",
       "title": "Yemen - Level 4: Do Not Travel",
-      "summary": "Do not travelin Yemen due to risk of terrorism, unrest, crime, health risks, kidnapping,\u202fand\u202flandmines.\nU.S. citizens should not travel to Yemen for any reason. The U.S. Embassy in Sana\u2019a suspended its operations in February 2015. The U.S. government...",
+      "summary": "The Department of State renewed its Travel Advisory for Yemen on December 19, 2025. There were no changes to the advisory level or risk indicators. Advisory summary was updated.\nDo not travel to Yemen due to risk of&nbsp;terrorism, unrest, crime, hea...",
       "risk_level": "High",
       "source": "US State Dept Advisories",
-      "link": "https://travel.state.gov/content/tsg_aem/us/en/home/international-travel/travel-advisories/destination.yem.html"
+      "link": "https://travel.state.gov/content/travel/en/traveladvisories/traveladvisories/yemen-travel-advisory.html"
+    },
+    {
+      "id": "4f623156c7",
+      "date": "2025-08-12",
+      "city": "All",
+      "country": "Mexico",
+      "pathogen": "covid19",
+      "title": "Mexico Travel Advisory - Level 2: Exercise Increased Caution",
+      "summary": "Exercise increased caution in Mexico due to terrorism, crime, and kidnapping.\nAdvisory summary\n\nMany violent crimes take place in Mexico. They include homicide, kidnapping, carjacking, and robbery. There is a risk of terrorist violence, including ter...",
+      "risk_level": "Low",
+      "source": "US State Dept Advisories",
+      "link": "https://travel.state.gov/content/travel/en/traveladvisories/traveladvisories/mexico-travel-advisory.html"
+    },
+    {
+      "id": "05374f1572",
+      "date": "2025-06-11",
+      "city": "All",
+      "country": "Canada",
+      "pathogen": "covid19",
+      "title": "Canada - Level 1: Exercise Normal Precautions",
+      "summary": "Reissued after periodic review with minor edits.\nExercise normal precautions in Canada.\nAdvisory summary: Canada is generally a safe destination for travelers.\nRead the country information page for additional information on travel to Canada.\nU.S. cit...",
+      "risk_level": "Low",
+      "source": "US State Dept Advisories",
+      "link": "https://travel.state.gov/content/travel/en/traveladvisories/traveladvisories/canada-travel-advisory.html"
     },
     {
       "id": "49ecdfc8aa",
@@ -411,18 +387,6 @@
       "risk_level": "Medium",
       "source": "US State Dept Advisories",
       "link": "https://travel.state.gov/content/travel/en/traveladvisories/traveladvisories/honduras-travel-advisory.html"
-    },
-    {
-      "id": "e7de2fae3f",
-      "date": "2024-11-27",
-      "city": "All",
-      "country": "Global",
-      "pathogen": "covid19",
-      "title": "China - Level 2: Exercise Increased Caution",
-      "summary": "Exercise increased cautionin China due to&nbsp;arbitrary enforcement of local laws, including in relation to exit bans.\nThe People\u2019s Republic of China (PRC) government arbitrarily enforces local laws, including exit bans on U.S. citizens and citizens...",
-      "risk_level": "Low",
-      "source": "US State Dept Advisories",
-      "link": "https://travel.state.gov/content/tsg_aem/us/en/home/international-travel/travel-advisories/destination.chn.html"
     },
     {
       "id": "98cc94c530",
